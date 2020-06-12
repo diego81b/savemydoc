@@ -26,6 +26,7 @@ yarn-error.log*
 
 ### Firebase ###
 .idea
+.vs
 **/node_modules/*
 **/.firebaserc
 
