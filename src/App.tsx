@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import * as React from 'react';
 import {
   Route,
   Redirect,
@@ -6,10 +6,9 @@ import {
   Switch,
 } from "react-router-dom";
 import './App.less';
-import Chat from './pages/Chat';
-import Login from './pages/Login';
-import Home from './pages/Home';
-// import { auth } from './services/firebase';
+import LoadingState from './components/LoadingState';
+import { FirebaseContext } from './services/firebase';
+import { AuthUserContext } from './services/session';
 
 type AppState = {
   loading: boolean;
@@ -17,43 +16,76 @@ type AppState = {
 }
 
 export interface RouteProps {
-  authenticated: boolean,
   path: string
 }
 
-const PrivateRoute: React.FC<RouteProps> = ({ children, authenticated,  ...rest }) => {
-    return (
-    <Route exact
-      {...rest}
-      render={(props) => !!authenticated ? children : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />}
-    />
+const Chat = React.lazy(() => import('./pages/Chat'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Home = React.lazy(() => import('./pages/Home'));
+
+const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
+  return (
+    <AuthUserContext.Consumer>
+      {authenticated =>
+        <Route
+          {...rest}
+          render={(props) => !!authenticated ? children : <Redirect to={{ pathname: '/login', state: { from: props.location } }} />}
+        />
+      }
+    </AuthUserContext.Consumer>
   )
 }
 
-const PublicRoute: React.FC<RouteProps> = ({ children, authenticated, ...rest }) => {
+const PublicRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
   return (
-  <Route exact
-    {...rest}
-    render={(props) => !authenticated ? children : <Redirect to='/chat' />}
-  />
-)
+    <AuthUserContext.Consumer>
+      {authenticated =>
+        <Route
+          {...rest}
+          render={(props) => !authenticated ? children : <Redirect to='/chat' />}
+        />
+      }
+    </AuthUserContext.Consumer>
+  )
 }
 
 const App: React.FC = () => {
-  const [appState, setAppState] = React.useState<AppState>({ loading: false, authenticated: true});
+  const [authUser, setAuthUser] = React.useState<firebase.User | null | undefined>();
+  const [loading, setLoading] = React.useState(false);
+  const { auth } = React.useContext(FirebaseContext);
 
-  return !!appState.loading ? <h2>Loading...</h2> : (
-    <Router>
-      <Switch>
-        <Route exact path="/" component={Home}></Route>
-        <PrivateRoute path="/chat/:name" authenticated={appState.authenticated}>
-            <Chat/>
-        </PrivateRoute>
-        <PublicRoute path="/login" authenticated={appState.authenticated}>
-          <Login/>
-        </PublicRoute>
-      </Switch>
-    </Router>
+  React.useEffect(() => {
+    console.log('APP useEffect');
+    setLoading(true);
+    setAuthUser(null);
+    const listener = auth.onAuthStateChanged(
+      authUser => {
+        setLoading(false);
+        return authUser
+          ? setAuthUser(authUser)
+          : setAuthUser(null);
+      }, error => {
+        setLoading(false);
+        console.log(error);
+      }
+    );
+    return () => listener();
+  }, [auth]);
+
+  return !!loading ? <LoadingState /> : (
+      <AuthUserContext.Provider value={authUser}>
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Home}></Route>
+            <PrivateRoute path="/chat">
+              <Chat/>
+            </PrivateRoute>
+            <PublicRoute path="/login">
+              <Login />
+            </PublicRoute>
+          </Switch>
+        </Router>
+      </AuthUserContext.Provider>
   );
 };
 

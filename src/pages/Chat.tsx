@@ -1,11 +1,12 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { Heading } from "@chakra-ui/core";
 
 const Chat: React.FC = () => {
   let { name } = useParams();
   return (
-    <div>
-      <h2>Chat {name}</h2>
+    <div id="chat">
+      <Heading as="h1">Chat {name || ""}</Heading>
     </div>
   );
 }

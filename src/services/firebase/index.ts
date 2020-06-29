@@ -1,3 +1,4 @@
+import React from 'react';
 import firebase from "firebase";
 
 const firebaseConfig = {
@@ -13,5 +14,5 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export const auth = firebase.auth;
-export const db = firebase.database();
+const FirebaseContext = React.createContext({ auth: firebase.auth(), db: firebase.database()});
+export { FirebaseContext };

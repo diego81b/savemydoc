@@ -1,6 +1,3 @@
-export default function Auth(){
-
-}
 
 export const isAuthenticated = (user: any) => !!user;
 
