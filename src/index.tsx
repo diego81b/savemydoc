@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom';
-import { DarkModeTheme } from './components/DarkModeTheme'
+import { CustomTheme } from './components/CustomTheme'
 import './index.less';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -8,9 +8,9 @@ import LoadingState from './components/LoadingState';
 
 ReactDOM.render(
   <React.StrictMode>
-      <DarkModeTheme>
+      <CustomTheme>
       <React.Suspense fallback={<LoadingState />}><App /></React.Suspense>
-      </DarkModeTheme>
+      </CustomTheme>
   </React.StrictMode>,
   document.getElementById('root')
 );

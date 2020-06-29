@@ -59,11 +59,11 @@ const Home: React.FC = () => {
           boxShadow="md">
           <List spacing={3} m={2}>
             <ListItem>
-              <ListIcon icon={FiSettings} />
+              <ListIcon as={FiSettings} />
             Configurazione
           </ListItem>
             <ListItem onClick={logout}>
-              <ListIcon icon={FiLogOut} />
+              <ListIcon as={FiLogOut} />
             Logout
           </ListItem>
           </List>
