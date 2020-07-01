@@ -30,18 +30,6 @@ const Login: React.FC = () => {
 
   return (
     <>
-      <Stack spacing={4}>
-        <InputGroup>
-          <InputLeftElement children={<FiUser color="gray.300" />} />
-          <Input type="phone" placeholder="Phone number" />
-        </InputGroup>
-
-        <InputGroup>
-          <InputLeftElement color="gray.300" fontSize="1.2em" children="$" />
-          <Input placeholder="Enter amount" />
-          <InputRightElement children={<FiUser color="green.500" />} />
-        </InputGroup>
-      </Stack>
       <Flex id="login-form" w="100%" h="100vh" alignItems="center" justifyContent="center">
         <Box maxW="48em" flexGrow={1} backgroundColor="gray.900" py={4} mx={2} boxShadow="md">
           <Grid templateColumns="5% auto 5%">
@@ -57,7 +45,6 @@ const Login: React.FC = () => {
                         name="username"
                         type="email"
                         placeholder="Enter username"
-                        size="lg"
                         focusBorderColor="teal.300"
                         value={state.username}
                         onChange={onChangeHandler} />
@@ -69,7 +56,6 @@ const Login: React.FC = () => {
                       <InputLeftElement children={<FiKey color="teal.300" />} />
                       <Input
                         name="password"
-                        size="lg"
                         value={state.password}
                         onChange={onChangeHandler}
                         type={show ? "text" : "password"}
